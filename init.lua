@@ -71,11 +71,11 @@ require("lazy").setup({
 
     require("plugins.comment"),
 
-    require("plugins.copilot"),
+    -- require("plugins.copilot"),
 
     require("plugins.tree_sitter"),
 
-    require("plugins.copilot_chat"),
+    -- require("plugins.copilot_chat"),
 
     require("plugins.jester"),
 
@@ -86,10 +86,6 @@ require("lazy").setup({
     require("plugins.editor_config"),
 
     require("plugins.mardown_preview"),
-
-    require("plugins.promise"),
-
-    require("plugins.nvim_ufo"),
 
     require("plugins.startup"),
 
