@@ -1,6 +1,9 @@
 vim.api.nvim_set_keymap('n', '<leader>gg', ':GitMessenger<CR>',
     { noremap = true, silent = true, desc = "Show git commit message" })
 
+
+vim.keymap.set("n", "<leader>gd", ":Gvdiffsplit!<CR>", { desc = "Three way diff split" })  -- Three way split
+
 vim.keymap.set("n", "<leader>gl", "2do", { desc = "Keep LOCAL version (Your changes)" })  -- Local
 vim.keymap.set("n", "<leader>gr", "4do", { desc = "Keep REMOTE version (Their changes)" })  -- Remote
 
