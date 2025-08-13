@@ -1,77 +1,147 @@
--- https://github.com/glepnir/lspsaga.nvim
-
 return {
-    'glepnir/lspsaga.nvim', -- Ensure this points to the correct repository
+    'nvimdev/lspsaga.nvim',
+    event = 'LspAttach',    -- load when LSP attaches to a buffer
     config = function()
         require('lspsaga').setup({
+            -- UI settings
+            ui = {
+                winblend = 10,
+                border = 'rounded',
+                colors = {
+                    normal_bg = '#002b36'
+                }
+            },
+
+            -- lightbulb for code actions
+            lightbulb = {
+                enable = true,
+                enable_in_insert = false,
+                sign = true,
+                sign_priority = 10,
+                virtual_text = false,
+            },
+
+            -- hover docs
+            hover = {
+                max_width = 0.6,
+                max_height = 0.8,
+                open_link = 'gx',
+            },
+
+            -- function signature help
+            signature = {
+                enable = true,
+                auto_open = {
+                    enable = true,
+                    timer = 4000, -- auto close after 4 seconds
+                },
+            },
+
+            -- breadcrumbs
             symbol_in_winbar = {
                 enable = true,
+                separator = ' › ',
+                hide_keyword = true,
+                show_file = true,
+                folder_level = 1,
+                respect_root = false,
+                color_mode = true,
+            },
+
+            outline = {
+                win_position = 'right',
+                win_with = '',
+                win_width = 30,
+                preview_width = 0.4,
+                show_detail = true,
+                auto_preview = true,
+                auto_refresh = true,
+                auto_close = true,
+                custom_sort = nil,
+                keys = {
+                    expand_or_jump = 'o',
+                    quit = 'q',
+                },
+            },
+
+            code_action = {
+                num_shortcut = true,
+                show_server_name = false,
+                extend_gitsigns = true,
+                keys = {
+                    quit = 'q',
+                    exec = '<CR>',
+                },
+            },
+
+            rename = {
+                quit = '<C-c>',
+                exec = '<CR>',
+                mark = 'x',
+                confirm = '<CR>',
+                in_select = false,
+            },
+
+            diagnostic = {
+                on_insert = false,
+                on_insert_follow = false,
+                insert_winblend = 0,
+                show_code_action = true,
+                show_source = true,
+                jump_num_shortcut = true,
+                max_width = 0.7,
+                max_height = 0.6,
+                max_show_width = 0.9,
+                max_show_height = 0.6,
+                text_hl_follow = true,
+                border_follow = true,
+                extend_relatedInformation = true,
+                keys = {
+                    exec_action = 'o',
+                    quit = 'q',
+                    expand_or_jump = '<CR>',
+                    quit_in_show = { 'q', '<ESC>' },
+                },
+            },
+
+            definition = {
+                edit = '<C-c>o',
+                vsplit = '<C-c>v',
+                split = '<C-c>i',
+                tabe = '<C-c>t',
+                quit = 'q',
+            },
+
+            -- references, implementations, etc.
+            finder = {
+                max_height = 0.5,
+                keys = {
+                    edit = { 'o', '<CR>' },
+                    vsplit = 's',
+                    split = 'i',
+                    tabe = 't',
+                    quit = { 'q', '<ESC>' },
+                },
             },
 
             implement = {
-                enable = true,
+                enable = false,
                 sign = true,
-                priority = 100,
+                lang = {},
+                virtual_text = true,
+                priority = 56,
             },
 
-            lightbulb = {
-                virtual_text = false,
+            -- highlight cursor line after jump
+            beacon = {
+                enable = true,
+                frequency = 7,
             },
         })
-        -- define on_attach function to customize key mappings
-        local on_attach = function(client, bufnr)
-            local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
-            local opts = { noremap = true, silent = true }
 
-            -- code action when pressing '<leader>ca'
-            -- buf_set_keymap('n', '<leader>ca', '<cmd>Lspsaga code_action<CR>', opts)
-            buf_set_keymap('n', '<leader>ca', '<cmd>Lspsaga code_action<CR>', opts)
-        end
-
-        -- typescript
-        require('lspconfig').ts_ls.setup({
-            on_attach = on_attach,
-        })
-
-        -- python
-        require('lspconfig').pyright.setup({
-            on_attach = on_attach,
-        })
-
-        -- html
-        require('lspconfig').jsonls.setup({
-            on_attach = on_attach,
-        })
-
-        -- css
-        require('lspconfig').sqlls.setup({
-            on_attach = on_attach,
-        })
-
-        -- yaml
-        require('lspconfig').yamlls.setup({
-            on_attach = on_attach,
-        })
-
-        -- csharp
-        require('lspconfig').omnisharp.setup({
-            on_attach = on_attach,
-        })
-
-        -- lua
-        require('lspconfig').lua_ls.setup({
-            on_attach = on_attach,
-        })
-
-        -- php
-        require('lspconfig').phpactor.setup({
-            on_attach = on_attach,
-        })
-
-        -- Include any additional LSP server configurations here, using the same on_attach function if desired
     end,
     dependencies = {
-        'nvim-treesitter/nvim-treesitter', -- optional
-        'nvim-tree/nvim-web-devicons' -- optional
+        'nvim-treesitter/nvim-treesitter',
+        'nvim-tree/nvim-web-devicons'
     }
 }
