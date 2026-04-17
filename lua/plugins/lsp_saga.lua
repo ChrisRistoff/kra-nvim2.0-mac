@@ -115,12 +115,14 @@ return {
             -- references, implementations, etc.
             finder = {
                 max_height = 0.5,
+                default = 'ref+imp+def', -- avoids running unexpected providers
                 keys = {
                     edit = { 'o', '<CR>' },
                     vsplit = 's',
                     split = 'i',
                     tabe = 't',
                     quit = { 'q', '<ESC>' },
+                    close = { 'q', '<ESC>' },  -- missing close key can cause stuck state
                 },
             },
 

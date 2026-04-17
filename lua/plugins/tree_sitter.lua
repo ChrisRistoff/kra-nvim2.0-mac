@@ -11,7 +11,7 @@ return {
                 ensure_installed = { "c", "cpp", "php", "javascript", "typescript", "lua", "python", "vim", "html", "css", "json", "yaml", "prisma", "sql", "c_sharp", "markdown", "markdown_inline" },
                 auto_install = true,
                 highlight = { enable = true },
-                indent = { enable = true, disable = { "python" } },
+                indent = { enable = true, disable = { "python", "typescript", "javascript", "tsx", "jsx" } },
                 incremental_selection = {
                     enable = true,
                     keymaps = {

@@ -36,7 +36,7 @@ vim.keymap.set('n', '<leader>ct', '<cmd>Lspsaga peek_type_definition<CR>',
 
 -- FINDER AND OUTLINE (your existing ones - these are correct)
 -- Finder to search and preview LSP entities
-vim.keymap.set('n', '<leader>cf', '<cmd>Lspsaga finder<CR>', vim.tbl_extend('force', opts, { desc = 'LSP Finder' }))
+vim.keymap.set('n', '<leader>cf', '<cmd>Telescope lsp_references<CR>', vim.tbl_extend('force', opts, { desc = 'LSP Finder' }))
 -- Show outline of the current file
 vim.keymap.set('n', '<leader>co', '<cmd>Lspsaga outline<CR>', vim.tbl_extend('force', opts, { desc = 'LSP Outline' }))
 
@@ -67,7 +67,7 @@ vim.keymap.set('n', '<leader>cR', '<cmd>Lspsaga rename ++project<CR>',
     vim.tbl_extend('force', opts, { desc = 'Rename in Project' }))
 
 -- Peek Implementation (if supported by your LSP server)
-vim.keymap.set('n', '<leader>ci', '<cmd>Lspsaga finder imp<CR>',
+vim.keymap.set('n', '<leader>ci', '<cmd>Telescope lsp_implementations<CR>',
     vim.tbl_extend('force', opts, { desc = 'Find Implementations' }))
 
 -- Terminal Toggle
