@@ -3,51 +3,45 @@
 return {
     {
         "CopilotC-Nvim/CopilotChat.nvim",
-        opts = {
-            show_help = "yes",   -- Show help text for CopilotChatInPlace, default: yes
-            debug = false,       -- Enable or disable debug mode, the log file will be in ~/.local/state/nvim/CopilotChat.nvim.log
-            disable_extra_info = 'no', -- Disable extra information (e.g: system prompt) in the response.
-            language =
-            "English"            -- Copilot answer language settings when using default prompts. Default language is English.
-            -- proxy = "socks5://127.0.0.1:3000", -- Proxies requests via https or socks.
-            -- temperature = 0.1,
+        branch = "main",
+
+        dependencies = {
+            { "zbirenbaum/copilot.lua" },
+            { "nvim-lua/plenary.nvim" },
+            { "nvim-telescope/telescope.nvim" },
+            { "nvim-telescope/telescope-ui-select.nvim" },
         },
-        build = function()
-            vim.notify("Please update the remote plugins by running ':UpdateRemotePlugins', then restart Neovim.")
-        end,
+
+        opts = {
+            debug = false,
+            language = "English",
+            model = "gpt-4o",
+            resources = "buffer",
+        },
+
         event = "VeryLazy",
+
+        config = function(_, opts)
+            -- Register telescope as vim.ui.select provider
+            require("telescope").setup({
+                extensions = {
+                    ["ui-select"] = {
+                        require("telescope.themes").get_dropdown(),
+                    },
+                },
+            })
+            require("telescope").load_extension("ui-select")
+            require("CopilotChat").setup(opts)
+        end,
+
         keys = {
-            { "<leader>ccc",  ":CopilotChat ",               desc = "CopilotChat - Chat with Copilot"},
-            { "<leader>ccb", ":CopilotChatBuffer ",         desc = "CopilotChat - Chat with current buffer" },
-            { "<leader>cce", "<cmd>CopilotChatExplain<cr>", desc = "CopilotChat - Explain code" },
-            { "<leader>cct", "<cmd>CopilotChatTests<cr>",   desc = "CopilotChat - Generate tests" },
-            {
-                "<leader>ccT",
-                "<cmd>CopilotChatVsplitToggle<cr>",
-                desc = "CopilotChat - Toggle Vsplit", -- Toggle vertical split
-            },
-            {
-                "<leader>ccv",
-                ":CopilotChatVisual ",
-                mode = "x",
-                desc = "CopilotChat - Open in vertical split",
-            },
-            {
-                "<leader>ccx",
-                ":CopilotChatInPlace<cr>",
-                mode = "x",
-                desc = "CopilotChat - Run in-place code",
-            },
-            {
-                "<leader>ccf",
-                "<cmd>CopilotChatFixDiagnostic<cr>", -- Get a fix for the diagnostic message under the cursor.
-                desc = "CopilotChat - Fix diagnostic",
-            },
-            {
-                "<leader>ccr",
-                "<cmd>CopilotChatReset<cr>", -- Reset chat history and clear buffer.
-                desc = "CopilotChat - Reset chat history and clear buffer",
-            }
+            { "<leader>ccc", "<cmd>CopilotChat<cr>",         desc = "CopilotChat - Open" },
+            { "<leader>ccr", "<cmd>CopilotChatReset<cr>",    desc = "CopilotChat - Reset" },
+            { "<leader>ccm", "<cmd>CopilotChatModels<cr>",   desc = "CopilotChat - Select model" },
+            { "<leader>ccp", "<cmd>CopilotChatPrompts<cr>",  desc = "CopilotChat - Prompt actions" },
+            { "<leader>cce", "<cmd>CopilotChatExplain<cr>",  desc = "CopilotChat - Explain code" },
+            { "<leader>cct", "<cmd>CopilotChatTests<cr>",    desc = "CopilotChat - Generate tests" },
+            { "<leader>ccf", "<cmd>CopilotChatFixDiagnostic<cr>", desc = "CopilotChat - Fix diagnostic" },
         },
     },
 }
