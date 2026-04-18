@@ -91,8 +91,6 @@ require("lazy").setup({
 
     require("plugins.TODO_comments"),
 
-    require("plugins.fidget"),
-
     require("plugins.neoclip"),
 
     require("plugins.scrollbar"),
@@ -102,6 +100,8 @@ require("lazy").setup({
     -- require("plugins.vim-dadbod-ui"),
 
     require("plugins.git_messenger"),
+
+    require("plugins.noice-ui"),
 
     telescope_setup,
     telescope_fzf_native_setup,
