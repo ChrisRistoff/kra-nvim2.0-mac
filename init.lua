@@ -69,19 +69,13 @@ require("lazy").setup({
 
     require("plugins.lua_line"),
 
-    -- require("plugins.copilot"),
-
     require("plugins.tree_sitter"),
-
-    -- require("plugins.copilot_chat"),
-
-    require("plugins.jester"),
 
     require("plugins.lsp_saga"),
 
     require("plugins.indent_line"),
 
-    require("plugins.mardown_preview"),
+    require("plugins.markdown_preview"),
 
     require("plugins.startup"),
 
@@ -95,13 +89,15 @@ require("lazy").setup({
 
     require("plugins.scrollbar"),
 
-    require("plugins.cheatsheet"),
-
     -- require("plugins.vim-dadbod-ui"),
 
     require("plugins.git_messenger"),
 
     require("plugins.noice-ui"),
+
+    require("plugins.copilot"),
+
+    ---------------------------------------------
 
     telescope_setup,
     telescope_fzf_native_setup,
@@ -119,7 +115,6 @@ require('settings')
 require("keymaps.general_keymaps")
 require('keymaps.nvim_tree_keymaps')
 require("keymaps.fzf_keymaps")
-require("keymaps.jester_keymaps")
 require("keymaps.lsp_saga_keymaps")
 require("keymaps.neoclip_keymaps")
 require("keymaps.git_keymaps")
