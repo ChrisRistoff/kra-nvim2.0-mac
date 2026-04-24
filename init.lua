@@ -20,7 +20,6 @@ vim.opt.rtp:prepend(lazypath)
 -- info: require where plugins > 1
 local git_related = require("plugins.git_related")
 local mason = require("plugins.mason")
-local telescope_setup, telescope_fzf_native_setup = require("plugins.telescope")
 
 -- info: Setup the plugins
 require("lazy").setup({
@@ -82,8 +81,7 @@ require("lazy").setup({
     -- ==============
     require("plugins.nvim_tree"),
     require("plugins.harpoon"),
-    telescope_setup,
-    telescope_fzf_native_setup,
+    require("plugins.telescope"),
 
     -- ==============
     -- GIT

@@ -27,4 +27,4 @@ local telescope_fzf_native_setup = {
     end,
 }
 
-return telescope_setup, telescope_fzf_native_setup
+return { telescope_setup, telescope_fzf_native_setup }
