@@ -67,7 +67,6 @@ require("lazy").setup({
     -- ==============
     -- LANGUAGE-SPECIFIC (TS / AWS / SCHEMAS)
     -- ==============
-    require("plugins.typescript_tools"),
     require("plugins.ts_error_translator"),
     require("plugins.schemastore"),
 
@@ -138,5 +137,3 @@ require("keymaps.git_keymaps")
 require("keymaps.dadbod_keymaps")
 require("keymaps.harpoon_keymaps")
 require("keymaps.neotest_keymaps")
-
-

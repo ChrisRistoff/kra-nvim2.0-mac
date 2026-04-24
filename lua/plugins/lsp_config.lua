@@ -17,13 +17,13 @@ function M.setup()
         ensure_installed = {
             "rust_analyzer",
             "lua_ls",
-            -- ts_ls intentionally omitted: typescript-tools.nvim replaces it
             "pyright",
             "jsonls",
             "yamlls",
             "gopls",
             "eslint",
             "sqlls",
+            "ts_ls",
         },
 
         -- automatic_installation removed (deprecated in mason-lspconfig v2)
@@ -129,21 +129,52 @@ function M.setup()
             )
 
             if client then
-                -- Enable inlay hints if the server supports them (Neovim 0.10+)
                 if client.supports_method and client:supports_method("textDocument/inlayHint") then
-                    pcall(vim.lsp.inlay_hint.enable, true, { bufnr = bufnr })
+                    vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
                 end
-                print(string.format("LSP %s attached to buffer %d", client.name, bufnr))
+                vim.notify(string.format("󰒋 %s attached", client.name), vim.log.levels.INFO, { title = "LSP" })
+            end
+
+        end,
+    })
+
+    -- Toggle inlay hints. Sets a buffer-local "user disabled" flag so the
+    -- InsertEnter/InsertLeave autocmds below don't fight the user's choice.
+    vim.keymap.set("n", "<leader>cs", function()
+        local enabled = vim.lsp.inlay_hint.is_enabled({ bufnr = 0 })
+        vim.lsp.inlay_hint.enable(not enabled, { bufnr = 0 })
+        vim.b.kra_inlay_hint_disabled = enabled and true or nil
+        vim.notify("Inlay hints: " .. (not enabled and "ON" or "OFF"), vim.log.levels.INFO)
+    end, { desc = "Toggle inlay hints (buffer)" })
+
+    -- Disable inlay hints in insert mode, re-enable on leaving it.
+    -- This avoids the upstream "Invalid 'col': out of range" error from
+    -- runtime/lua/vim/lsp/inlay_hint.lua when hints get out of sync with
+    -- in-progress edits (Neovim issue #36318).
+    local hint_aug = vim.api.nvim_create_augroup("KraInlayHintInsertToggle", { clear = true })
+    vim.api.nvim_create_autocmd("InsertEnter", {
+        group = hint_aug,
+        callback = function(args)
+            if vim.bo[args.buf].buftype ~= "" then return end
+            if vim.lsp.inlay_hint.is_enabled({ bufnr = args.buf }) then
+                vim.lsp.inlay_hint.enable(false, { bufnr = args.buf })
+            end
+        end,
+    })
+    vim.api.nvim_create_autocmd("InsertLeave", {
+        group = hint_aug,
+        callback = function(args)
+            if vim.bo[args.buf].buftype ~= "" then return end
+            if vim.b[args.buf].kra_inlay_hint_disabled then return end
+            local clients = vim.lsp.get_clients({ bufnr = args.buf, method = "textDocument/inlayHint" })
+            if #clients > 0 then
+                vim.lsp.inlay_hint.enable(true, { bufnr = args.buf })
             end
         end,
     })
 
-    -- Toggle inlay hints
-    vim.keymap.set("n", "<leader>ih", function()
-        local enabled = vim.lsp.inlay_hint.is_enabled({ bufnr = 0 })
-        vim.lsp.inlay_hint.enable(not enabled, { bufnr = 0 })
-        vim.notify("Inlay hints: " .. (not enabled and "ON" or "OFF"), vim.log.levels.INFO)
-    end, { desc = "Toggle inlay hints (buffer)" })
+
+
 
     -- Per-server config using the new vim.lsp.config API
     vim.lsp.config("gopls", {
@@ -185,7 +216,6 @@ function M.setup()
         },
     })
 
-    -- ts_ls is replaced by typescript-tools.nvim (lua/plugins/typescript_tools.lua)
 
     vim.lsp.config("pyright", {
         settings = {
@@ -245,6 +275,66 @@ function M.setup()
         root_markers = { "template.yaml", "template.yml", "samconfig.toml", ".git" },
     })
 
+    -- ts_ls: TypeScript / JavaScript LSP (typescript-language-server wraps tsserver).
+    --
+    -- Inlay hints: typescript-language-server reads BOTH `init_options.preferences`
+    -- (at startup) AND `settings.{typescript,javascript}.inlayHints` (via
+    -- workspace/didChangeConfiguration). We pass both so hints render as soon as
+    -- the server is ready instead of only after the first config push.
+    vim.lsp.config("ts_ls", {
+        filetypes = {
+            "javascript",
+            "javascriptreact",
+            "javascript.jsx",
+            "typescript",
+            "typescriptreact",
+            "typescript.tsx",
+        },
+        init_options = {
+            preferences = {
+                includeInlayParameterNameHints = "all",
+                includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+                includeInlayFunctionParameterTypeHints = true,
+                includeInlayVariableTypeHints = false,
+                includeInlayVariableTypeHintsWhenTypeMatchesName = false,
+                includeInlayPropertyDeclarationTypeHints = true,
+                includeInlayFunctionLikeReturnTypeHints = true,
+                includeInlayEnumMemberValueHints = true,
+            },
+        },
+
+        settings = {
+            typescript = {
+                updateImportsOnFileMove = { enabled = "always" },
+                suggest = {
+                    completeFunctionCalls = true,
+                },
+                inlayHints = {
+                    parameterNames = { enabled = "all", suppressWhenArgumentMatchesName = true },
+                    parameterTypes = { enabled = true },
+                    variableTypes = { enabled = false },
+                    propertyDeclarationTypes = { enabled = true },
+                    functionLikeReturnTypes = { enabled = true },
+                    enumMemberValues = { enabled = true },
+                },
+            },
+            javascript = {
+                updateImportsOnFileMove = { enabled = "always" },
+                suggest = {
+                    completeFunctionCalls = true,
+                },
+                inlayHints = {
+                    parameterNames = { enabled = "all", suppressWhenArgumentMatchesName = true },
+                    parameterTypes = { enabled = true },
+                    variableTypes = { enabled = false },
+                    propertyDeclarationTypes = { enabled = true },
+                    functionLikeReturnTypes = { enabled = true },
+                    enumMemberValues = { enabled = true },
+                },
+            },
+        },
+    })
+
     -- Enable all servers (mason-lspconfig's automatic_enable handles this too,
     -- but being explicit here is fine and overrides nothing)
     vim.lsp.enable({
@@ -256,8 +346,8 @@ function M.setup()
         "yamlls",
         "eslint",
         "sqlls",
+        "ts_ls",
     })
-
 
     -- Diagnostic display config (unchanged)
     vim.diagnostic.config({

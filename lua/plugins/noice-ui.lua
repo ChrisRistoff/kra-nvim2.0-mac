@@ -36,12 +36,11 @@ return {
                 },
             },
             routes = {
-                -- Skip LSP progress entirely (it shows in the status line via lualine anyway)
+                -- Route LSP loading progress to mini (bottom-right)
                 {
                     filter = { event = "lsp", kind = "progress" },
-                    opts = { skip = true },
+                    view = "mini",
                 },
-                -- Skip deprecated warnings (still in message history via <leader>fn)
                 {
                     filter = { event = "msg_show", find = "deprecated" },
                     opts = { skip = true },
@@ -64,7 +63,7 @@ return {
             },
             lsp = {
                 progress = {
-                    enabled = false, -- disable LSP "loading" progress popups
+                    enabled = true,  -- show LSP loading progress in the mini popup
                 },
                 override = {
                     ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
@@ -72,6 +71,7 @@ return {
                     ["cmp.entry.get_documentation"] = true,
                 },
             },
+
             presets = {
                 bottom_search = true,
                 command_palette = true,

@@ -192,7 +192,7 @@ Servers managed by Mason and configured in [`lua/plugins/lsp_config.lua`](lua/pl
 | `<leader>fr` | Format (via conform) |
 | `<leader>dl` | Open diagnostics float |
 | `<leader>dq` | Diagnostics → location list |
-| `<leader>ih` | Toggle inlay hints (buffer) |
+| `<leader>cs` | Toggle inlay hints (buffer) |
 
 **Lspsaga keymaps** (`lua/keymaps/lsp_saga_keymaps.lua`):
 
@@ -369,7 +369,7 @@ To switch to **vitest**, replace `neotest-jest` with [`marilari88/neotest-vitest
 
 Already covered above but worth calling out:
 
-- **Inlay hints** auto-enabled on any LSP that supports them. Toggle per buffer with `<leader>ih`.
+- **Inlay hints** auto-enabled on any LSP that supports them. Toggle per buffer with `<leader>cs`.
 - **Format-on-save** runs async with a 1.5s timeout; toggle with `<leader>tf`.
 - **Diagnostics** show inline (`virtual_text`) plus signs in the gutter, sorted by severity.
 
@@ -391,7 +391,7 @@ Quick alphabetical index of `<leader>` keymaps. Not exhaustive — see individua
 | `<leader>fr` | Format buffer (conform) |
 | `<leader>g*` | Git: `gg` messenger, `gd` diff, `gl/gr/gb` conflict resolution, `gn/gp` conflict nav |
 | `<leader>h*` | Harpoon: `ha`, `hh`, `hn`, `hp` |
-| `<leader>ih` | Toggle inlay hints |
+| `<leader>cs` | Toggle inlay hints |
 | `<leader>n*` | Neotest |
 | `<leader>rn` | LSP rename |
 | `<leader>rr` | Replace word under cursor |
@@ -409,7 +409,7 @@ Press `<leader>` and wait a moment — [which-key](https://github.com/folke/whic
 - **`cfn_lsp_extra` not attaching** — make sure Mason installed it (`:Mason` → search `cfn-lsp-extra`). It activates only on YAML/JSON files in projects with `template.yaml`, `template.yml`, or `samconfig.toml` at the root. Force a reload with `:e`.
 - **YAML schema not detected on `template.yaml`** — SchemaStore matches by filename. If you use `template.yml` it should still match the SAM schema; for unusual filenames, add an `extra` entry in the `yamlls` config (already shows the pattern).
 - **TypeScript feels slow on large repos** — typescript-tools sometimes restarts when many files change. Try `:TSToolsLogStop` then `:LspRestart`. As a fallback you can drop `typescript-tools.nvim` and add `vtsls` to `ensure_installed` in `lsp_config.lua`.
-- **Inlay hints too noisy** — toggle off per-buffer with `<leader>ih`; or disable globally with `vim.lsp.inlay_hint.enable(false)` in `settings.lua`.
+- **Inlay hints too noisy** — toggle off per-buffer with `<leader>cs`; or disable globally with `vim.lsp.inlay_hint.enable(false)` in `settings.lua`.
 - **Format-on-save hangs** — bump the timeout in `lua/plugins/conform.lua` (`format_on_save` returns `{ timeout_ms = 1500 }`), or disable with `vim.g.disable_autoformat = true`.
 - **Treesitter parser errors after update** — `:TSUpdate` and restart.
 - **Copilot not authenticated** — run `:Copilot setup` and follow the device-code flow.

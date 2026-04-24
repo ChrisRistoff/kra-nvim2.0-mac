@@ -1,14 +1,10 @@
 -- https://github.com/hrsh7th/nvim-cmp
-
--- https://github.com/hrsh7th/nvim-cmp
-
 return {
     "hrsh7th/nvim-cmp",
     dependencies = {
         "hrsh7th/cmp-nvim-lsp",
         "hrsh7th/cmp-buffer",                    -- word completions from open buffers
         "hrsh7th/cmp-path",                      -- filesystem path completions
-        "hrsh7th/cmp-nvim-lsp-signature-help",   -- shows parameter hints as you type args
         "L3MON4D3/LuaSnip",
         "saadparwaiz1/cmp_luasnip",
         "onsails/lspkind.nvim",                  -- VSCode-style icons + labels in menu
@@ -22,7 +18,11 @@ return {
         cmp.setup({
             snippet = {
                 expand = function(args)
-                    luasnip.lsp_expand(args.body)
+                    -- Try LuaSnip first; fall back to Neovim native snippet engine
+                    local ok = pcall(luasnip.lsp_expand, args.body)
+                    if not ok then
+                        pcall(vim.snippet.expand, args.body)
+                    end
                 end,
             },
 
@@ -40,14 +40,14 @@ return {
                     ellipsis_char = "...",
                     show_labelDetails = true, -- shows extra detail e.g. "(method)" next to name
                     menu = {
-                        nvim_lsp              = "[LSP]",
-                        luasnip               = "[Snip]",
-                        buffer                = "[Buf]",
-                        path                  = "[Path]",
-                        nvim_lsp_signature_help = "[Sig]",
+                        nvim_lsp = "[LSP]",
+                        luasnip  = "[Snip]",
+                        buffer   = "[Buf]",
+                        path     = "[Path]",
                     },
                 }),
             },
+
 
             mapping = cmp.mapping.preset.insert({
                 ['<C-d>']     = cmp.mapping.scroll_docs(-4),
@@ -97,8 +97,9 @@ return {
             }),
 
             sources = cmp.config.sources({
-                -- Ordered by priority
-                { name = 'nvim_lsp_signature_help' },
+                -- Ordered by priority; nvim_lsp_signature_help removed: it sends
+                -- vtsls snippet items that crash nvim-cmp's internal parser.
+                -- Use <C-k> or lspsaga for signature help instead.
                 { name = 'nvim_lsp',  max_item_count = 20 },
                 { name = 'luasnip',   max_item_count = 10 },
                 { name = 'buffer',    max_item_count = 10, keyword_length = 3 },
