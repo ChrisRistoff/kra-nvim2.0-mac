@@ -98,11 +98,12 @@ return {
 
             sources = cmp.config.sources({
                 -- Ordered by priority
-                { name = 'nvim_lsp_signature_help' }, -- param hints first, appears inline as you open parens
+                { name = 'nvim_lsp_signature_help' },
                 { name = 'nvim_lsp',  max_item_count = 20 },
                 { name = 'luasnip',   max_item_count = 10 },
                 { name = 'buffer',    max_item_count = 10, keyword_length = 3 },
                 { name = 'path' },
+                { name = 'vim-dadbod-completion', keyword_length = 2 },
             }),
 
             -- Don't complete in comments

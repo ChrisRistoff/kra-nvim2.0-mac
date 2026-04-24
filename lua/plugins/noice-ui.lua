@@ -4,7 +4,16 @@ return {
         event = "VeryLazy",
         dependencies = {
             "MunifTanjim/nui.nvim",
-            { "rcarriga/nvim-notify", opts = { background_colour = "#000000" } },
+            {
+                "rcarriga/nvim-notify",
+                opts = {
+                    background_colour = "#000000",
+                    render = "compact",     -- single-line, less vertical space
+                    timeout = 2000,         -- auto-dismiss after 2s
+                    max_width = 50,
+                    top_down = false,       -- stack from bottom-right up
+                },
+            },
         },
         keys = {
             { "<leader>fn", "<cmd>Noice telescope<cr>", desc = "Noice message history" },
@@ -16,34 +25,46 @@ return {
         opts = {
             views = {
                 mini = {
-                    position = { row = 1, col = "100%" },
+                    position = { row = -2, col = "100%" },   -- bottom-right, 2 rows from edge
                     size = { width = "auto", height = "auto" },
-                    border = { style = "rounded" },
-                    win_options = { winblend = 0 },
+                    border = { style = "none" },             -- no border = less visual noise
+                    win_options = { winblend = 20 },         -- slight transparency
+                    timeout = 3000,
+                },
+                notify = {
+                    timeout = 2000,
                 },
             },
             routes = {
+                -- Skip LSP progress entirely (it shows in the status line via lualine anyway)
+                {
+                    filter = { event = "lsp", kind = "progress" },
+                    opts  = { skip = true },
+                },
+                -- Skip deprecated warnings (still in message history via <leader>fn)
                 {
                     filter = { event = "msg_show", find = "deprecated" },
-                    view = "notify",
+                    opts  = { skip = true },
                 },
+                -- Show search count (e.g. "3/12") in mini
                 {
                     filter = { event = "msg_show", kind = "", find = "%d+" },
-                    view = "mini",
+                    view  = "mini",
                 },
+                -- Skip all other blank-kind messages (write confirmations, etc.)
                 {
                     filter = { event = "msg_show", kind = "" },
-                    opts = { skip = true },
+                    opts  = { skip = true },
                 },
+                -- Route all notify() calls through mini instead of the big notify popup
                 {
                     filter = { event = "notify" },
-                    view = "notify",
+                    view  = "mini",
                 },
             },
             lsp = {
                 progress = {
-                    enabled = true,
-                    view = "mini",       -- shows in top-right like other popups, not bottom
+                    enabled = false,    -- disable LSP "loading" progress popups
                 },
                 override = {
                     ["vim.lsp.util.convert_input_to_markdown_lines"] = true,

@@ -1,6 +1,5 @@
 --  Author: Krasen Hristov
 
-
 -- Tell the Lua language server that `vim` is a global variable
 _G.vim = vim
 
@@ -18,103 +17,128 @@ if not vim.uv.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
-
-
 -- info: require where plugins > 1
 local git_related = require("plugins.git_related")
 local mason = require("plugins.mason")
 local telescope_setup, telescope_fzf_native_setup = require("plugins.telescope")
 
-
-
 -- info: Setup the plugins
 require("lazy").setup({
-    -- themes
+    -- ==============
+    -- THEME
+    -- ==============
     -- require("themes.night_owl"), -- for night
-
     -- require("themes.evergarden"), -- for morning
-
     -- require("themes.calvera"),
-
     require("themes.gruvbox_baby"),
 
-
-
-    -- plugins
-    require("plugins.lua_snip"),
-
-    require("plugins.friendly_snippets"),
-
-    require("plugins.nvim_tree"),
-
-    require("plugins.autoclose_brackets"),
-
-    git_related[1], -- vim fugitive
-    git_related[2], -- vim rhubarb
-
-    mason[1], mason[2],
-
-    require("plugins.cmp"),
-
+    -- ==============
+    -- LSP / MASON
+    -- ==============
+    mason[1],
+    mason[2],
     {
         "neovim/nvim-lspconfig",
         config = function()
             require("plugins.lsp_config").setup()
-        end
+        end,
     },
-
-    require("plugins.which_key"),
-
-    require("plugins.git_signs"),
-
-    require("plugins.lua_line"),
-
-    require("plugins.tree_sitter"),
-
     require("plugins.lsp_saga"),
+    require("plugins.lazydev"),
 
-    require("plugins.indent_line"),
-
-    require("plugins.markdown_preview"),
-
-    require("plugins.startup"),
-
-    require("plugins.hlslens"),
-
-    require("plugins.cursorline"),
-
-    require("plugins.TODO_comments"),
-
-    require("plugins.neoclip"),
-
-    require("plugins.scrollbar"),
-
-    -- require("plugins.vim-dadbod-ui"),
-
-    require("plugins.git_messenger"),
-
-    require("plugins.noice-ui"),
-
+    -- ==============
+    -- COMPLETION / SNIPPETS
+    -- ==============
+    require("plugins.cmp"),
+    require("plugins.lua_snip"),
+    require("plugins.friendly_snippets"),
     require("plugins.copilot"),
 
-    ---------------------------------------------
+    -- ==============
+    -- TREESITTER / SYNTAX
+    -- ==============
+    require("plugins.tree_sitter"),
 
+    -- ==============
+    -- FORMATTING / LINTING
+    -- ==============
+    require("plugins.conform"),
+    require("plugins.nvim_lint"),
+
+    -- ==============
+    -- LANGUAGE-SPECIFIC (TS / AWS / SCHEMAS)
+    -- ==============
+    require("plugins.typescript_tools"),
+    require("plugins.ts_error_translator"),
+    require("plugins.schemastore"),
+
+    -- ==============
+    -- TESTING
+    -- ==============
+    require("plugins.neotest"),
+
+    -- ==============
+    -- FILE NAVIGATION
+    -- ==============
+    require("plugins.nvim_tree"),
+    require("plugins.harpoon"),
     telescope_setup,
     telescope_fzf_native_setup,
-    -- add more
+
+    -- ==============
+    -- GIT
+    -- ==============
+    git_related[1], -- vim fugitive
+    git_related[2], -- vim rhubarb
+    require("plugins.git_signs"),
+    require("plugins.git_messenger"),
+
+    -- ==============
+    -- DATABASE
+    -- ==============
+    require("plugins.vim-dadbod-ui"),
+
+    -- ==============
+    -- EDITING UTILITIES
+    -- ==============
+    require("plugins.autoclose_brackets"),
+    require("plugins.TODO_comments"),
+    require("plugins.neoclip"),
+
+    -- ==============
+    -- UI / VISUAL
+    -- ==============
+    require("plugins.lua_line"),
+    require("plugins.indent_line"),
+    require("plugins.hlslens"),
+    require("plugins.cursorline"),
+    require("plugins.scrollbar"),
+    require("plugins.noice-ui"),
+    require("plugins.startup"),
+    require("plugins.which_key"),
+
+    -- ==============
+    -- MARKDOWN
+    -- ==============
+    require("plugins.markdown_preview"),
 })
 
+-- ==============
+-- SETTINGS
+-- ==============
+require("settings")
 
-
--- info: general settings
-require('settings')
-
-
-
--- info: keymaps setup
+-- ==============
+-- KEYMAPS
+-- ==============
 require("keymaps.general_keymaps")
-require('keymaps.nvim_tree_keymaps')
+require("keymaps.nvim_tree_keymaps")
 require("keymaps.fzf_keymaps")
 require("keymaps.lsp_saga_keymaps")
 require("keymaps.neoclip_keymaps")
 require("keymaps.git_keymaps")
+require("keymaps.dadbod_keymaps")
+require("keymaps.harpoon_keymaps")
+require("keymaps.neotest_keymaps")
+
+
