@@ -130,22 +130,33 @@ function M.setup()
 
             if client then
                 if client.supports_method and client:supports_method("textDocument/inlayHint") then
-                    vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
+                    if not vim.b[bufnr].kra_inlay_hint_disabled then
+                        vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
+                    end
                 end
+
                 vim.notify(string.format("󰒋 %s attached", client.name), vim.log.levels.INFO, { title = "LSP" })
             end
-
         end,
     })
 
     -- Toggle inlay hints. Sets a buffer-local "user disabled" flag so the
     -- InsertEnter/InsertLeave autocmds below don't fight the user's choice.
-    vim.keymap.set("n", "<leader>cs", function()
+    -- Wrapped in VimEnter so it runs *after* startup.nvim's dashboard, which
+    -- otherwise claims `<leader>cs` for "Telescope colorscheme".
+    local function toggle_inlay_hints()
         local enabled = vim.lsp.inlay_hint.is_enabled({ bufnr = 0 })
         vim.lsp.inlay_hint.enable(not enabled, { bufnr = 0 })
         vim.b.kra_inlay_hint_disabled = enabled and true or nil
         vim.notify("Inlay hints: " .. (not enabled and "ON" or "OFF"), vim.log.levels.INFO)
-    end, { desc = "Toggle inlay hints (buffer)" })
+    end
+    vim.api.nvim_create_autocmd("VimEnter", {
+        group = vim.api.nvim_create_augroup("KraInlayHintKeymap", { clear = true }),
+        callback = function()
+            vim.keymap.set("n", "<leader>cs", toggle_inlay_hints, { desc = "Toggle inlay hints (buffer)" })
+        end,
+    })
+
 
     -- Disable inlay hints in insert mode, re-enable on leaving it.
     -- This avoids the upstream "Invalid 'col': out of range" error from
@@ -155,7 +166,9 @@ function M.setup()
     vim.api.nvim_create_autocmd("InsertEnter", {
         group = hint_aug,
         callback = function(args)
-            if vim.bo[args.buf].buftype ~= "" then return end
+            if vim.bo[args.buf].buftype ~= "" then
+                return
+            end
             if vim.lsp.inlay_hint.is_enabled({ bufnr = args.buf }) then
                 vim.lsp.inlay_hint.enable(false, { bufnr = args.buf })
             end
@@ -164,17 +177,18 @@ function M.setup()
     vim.api.nvim_create_autocmd("InsertLeave", {
         group = hint_aug,
         callback = function(args)
-            if vim.bo[args.buf].buftype ~= "" then return end
-            if vim.b[args.buf].kra_inlay_hint_disabled then return end
+            if vim.bo[args.buf].buftype ~= "" then
+                return
+            end
+            if vim.b[args.buf].kra_inlay_hint_disabled then
+                return
+            end
             local clients = vim.lsp.get_clients({ bufnr = args.buf, method = "textDocument/inlayHint" })
             if #clients > 0 then
                 vim.lsp.inlay_hint.enable(true, { bufnr = args.buf })
             end
         end,
     })
-
-
-
 
     -- Per-server config using the new vim.lsp.config API
     vim.lsp.config("gopls", {
@@ -215,7 +229,6 @@ function M.setup()
             },
         },
     })
-
 
     vim.lsp.config("pyright", {
         settings = {
