@@ -24,7 +24,6 @@ function M.setup()
             "gopls",
             "eslint",
             "sqlls",
-            "cfn_lsp_extra", -- AWS CloudFormation / SAM completion + hover
         },
 
         -- automatic_installation removed (deprecated in mason-lspconfig v2)
@@ -257,7 +256,6 @@ function M.setup()
         "yamlls",
         "eslint",
         "sqlls",
-        "cfn_lsp_extra",
     })
 
 
